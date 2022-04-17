@@ -1,0 +1,129 @@
+﻿@using Reviews.Shared
+@using global::Review.Database
+
+@if(DeleteDialogOpen)
+{
+    <TestReviews.Pages.Components.ModalDialog Title="Удаление"
+                 Text="Вы действительно хотите удалить?"
+                 OnClose="@OnDeleteDialogClose"></TestReviews.Pages.Components.ModalDialog>
+}
+@if(!viewallinfo)
+{
+    @foreach(var el in Reviews)
+    {
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">@el.Name  @el.CreateTime</h5>
+            <p class="card-text">Организация: @el.OrgName</p>
+            <p class="card-text">Адрес: @el.OrgAddress</p>
+            <p class="card-text">Оценка: @el.Rating</p>
+        </div>
+        <a class="btn btn-primary" @onclick="() => ViewallInfo(el.Id)">Подробности</a>
+        @if(IsAdmin)
+        {
+            <br />
+            <a class="btn btn-danger" @onclick="() => Delete(el.Id)">Удалить</a>
+        }
+        </div>
+    <br />
+    }
+    @if(!all)
+    {
+        <button @onclick="() => View()">+Показать еще 5</button>
+    }
+}
+else
+{   
+    @if(allReview != null)
+    {
+        <a class="btn btn-primary" @onclick="() => viewallinfo = false">Назад</a>
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">@allReview.Name  @allReview.CreateTime</h5>
+                <p class="card-text">Организация: @allReview.OrgName</p>
+                <p class="card-text">Адрес: @allReview.OrgAddress</p>
+                <p class="card-text">Что понравилось: @allReview.Like</p>
+                <p class="card-text">Что не понравилось: @allReview.NotLike</p>
+                <p class="card-text">Оценка: @allReview.Rating</p>
+                <p class="card-text">Комментарий: @allReview.Comment</p>
+            </div>
+        </div>
+    }
+}
+
+@code 
+{
+    [Parameter]
+    public bool IsAdmin { get; set; } = false;
+
+    private ApplicationContext _context;
+
+    private List<ReviewModel> Reviews;
+
+    int take = 5;
+    int skip = 0;
+    bool all = false;
+    int count;
+
+    bool viewallinfo = false;
+    ReviewModel allReview  { get; set; }
+
+    public void ViewallInfo(int Id)
+    {
+        viewallinfo = true;
+        allReview = Reviews.Find(x => x.Id == Id);
+    }
+
+    public bool DeleteDialogOpen { get; set; }
+    public int deleteId { get; set; }
+
+    public void Delete(int Id)
+    {
+        DeleteDialogOpen = true;
+        deleteId = Id;
+    }
+
+    private async Task OnDeleteDialogClose(bool accepted)
+    {
+        DeleteDialogOpen = false;
+        if(accepted)
+        {
+            var obj = _context.ReviewModels.Find(deleteId);  
+            _context.ReviewModels.Remove(obj);
+            _context.SaveChanges();
+            Reviews.Remove(obj);
+        }
+
+        StateHasChanged();
+    }
+
+    public void View()
+    {
+        take += 5;
+        skip += 5;
+
+        Reviews.AddRange(_context.ReviewModels
+            .OrderBy(x => x.Id)
+            .OrderByDescending(x => x.CreateTime)
+            .Take(take).Skip(skip).ToList()
+        );
+
+        if (count == Reviews.Count)
+            all = true;
+    }
+
+    protected override void OnInitialized()
+    {
+        _context = new ApplicationContext();
+        Reviews = new();
+
+        count = _context.ReviewModels.Count();
+        if (count <= 5)
+            all = true;
+
+        Reviews = _context.ReviewModels
+            .OrderBy(x => x.Id)
+            .OrderByDescending(x => x.CreateTime)
+            .Take(take).ToList();
+    }
+}

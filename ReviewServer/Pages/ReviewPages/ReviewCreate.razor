@@ -1,0 +1,95 @@
+﻿@page "/reviewCreate"
+
+@using Reviews.Shared.Services
+@using System.Security.Claims
+@using Reviews.Shared
+@using global::Review.Database
+@inject IAuthorizationService authorizationService
+@inject IUserService userService
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
+
+<h3>Оставить отзыв</h3>
+
+@if(!user.IsInRole("Admin"))
+{
+    <EditForm Model="@ReviewModel" OnValidSubmit="@Send">
+    <div class="row">
+        <div class="form-group col-sm-6">
+            <label for="name" class="h6">Имя пользователя</label>
+            <input @bind="ReviewModel.Name" type="text" class="form-control" id="name" placeholder="Имя" required readonly="ReviewModel.Name??">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-sm-6">
+            <label for="org" class="h6">Название организации</label>
+            <input @bind="ReviewModel.OrgName" type="text" class="form-control" id="org" placeholder="Введите название организации" required>
+        </div>   
+    </div>
+    <div class="row">
+        <div class="form-group col-sm-6">
+            <label for="address" class="h6">Адрес организации</label>
+            <input @bind="ReviewModel.OrgAddress" type="text" class="form-control" id="address" placeholder="Введите адрес организации">
+        </div>   
+    </div>
+ 
+    <div class="form-group">
+        <label for="like" class="h4 ">Что понравилось</label>
+        <textarea @bind="ReviewModel.Like" id="like" class="form-control" rows="5" placeholder="Enter your message" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="notlike" class="h4 ">Что не понравилось</label>
+        <textarea @bind="ReviewModel.NotLike" id="notlike" class="form-control" rows="5" placeholder="Enter your message"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="message" class="h4 ">Коментарии</label>
+        <textarea @bind="ReviewModel.Comment" id="message" class="form-control" rows="5" placeholder="Enter your message"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="rating" class="h4 ">Оценка:</label>
+        <input @bind="ReviewModel.Rating" type="number" min="1" max="5" step="1" required/>
+    </div>
+    <br>
+    <button type="submit" id="form-submit" class="btn btn-success btn-lg pull-right ">Отправить</button>
+    </EditForm>
+}
+else
+{
+    <h2>администраторы не могут оставлять отзыв.</h2>
+}
+
+@code 
+{
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    private ReviewModel ReviewModel;
+    ClaimsPrincipal user;
+
+    private ApplicationContext _context;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _context = new();
+        user = (await authenticationStateTask).User;
+        ReviewModel = new();
+
+        var accessToken = await localStorageService.GetItemAsync<string>("accessToken");
+        User returnedUser = await userService.GetUserByAccessTokenAsync(accessToken);
+
+        if (returnedUser != null)
+        {
+            ReviewModel.Name = returnedUser.Name;
+            ReviewModel.UserId = returnedUser.Id;
+        }
+
+
+    }
+
+    public void Send()
+    {
+        ReviewModel.CreateTime = DateTime.Now;
+        _context.ReviewModels.Add(ReviewModel);
+        _context.SaveChanges();
+    }
+}

@@ -1,0 +1,8 @@
+﻿@page "/admin"
+@attribute [Authorize(Roles = "Admin")]
+
+<TestReviews.Pages.ReviewPages.Review IsAdmin="true"></TestReviews.Pages.ReviewPages.Review>
+
+@code {
+
+}

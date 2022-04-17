@@ -1,0 +1,33 @@
+﻿@page "/"
+
+@using System.Security.Claims
+@using Reviews.Shared.Services
+@using Reviews.Shared
+@inject IAuthorizationService authorizationService
+@inject IUserService userService
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Отзывы</PageTitle>
+
+<TestReviews.Pages.ReviewPages.Review></TestReviews.Pages.ReviewPages.Review>
+
+@code
+{
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    ClaimsPrincipal user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = (await authenticationStateTask).User;
+
+        if(user.IsInRole("Admin"))
+        {
+            NavigationManager.NavigateTo("/admin");
+        }
+
+
+    }
+}
