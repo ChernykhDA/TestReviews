@@ -1,7 +1,7 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using Reviews.Shared;
-using Reviews.Shared.Services;
+using Review.Shared;
+using Review.Shared.Services;
 using System.Security.Claims;
 
 namespace TestReviews.Common

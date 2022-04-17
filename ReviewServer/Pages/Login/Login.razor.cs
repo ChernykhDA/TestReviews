@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Reviews.Shared;
+using Review.Shared;
 using System.Security.Claims;
 using TestReviews.Common;
 

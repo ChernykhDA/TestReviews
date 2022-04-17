@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Review.Database.Configs;
-using Reviews.Shared;
+using Review.Shared;
 using static Review.Database.DataInit;
 
 namespace Review.Database

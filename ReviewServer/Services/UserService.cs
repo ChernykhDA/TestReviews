@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Review.Database;
-using Reviews.Shared;
-using Reviews.Shared.Services;
+using Review.Shared;
+using Review.Shared.Services;
 using System.Security.Cryptography;
 using TestReviews.Common;
 

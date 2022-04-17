@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Reviews.Shared;
+using Review.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Review.Database;
-using Reviews.Shared.Services;
+using Review.Shared.Services;
 using TestReviews.Common;
 using TestReviews.Services;
 
