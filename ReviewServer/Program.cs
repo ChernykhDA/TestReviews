@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Review.Database;
 using Reviews.Shared.Services;
 using TestReviews.Common;
-using TestReviews.Data;
 using TestReviews.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 
 builder.Services.AddBlazoredLocalStorage();
 
